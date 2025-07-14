@@ -1,0 +1,93 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --color-spotify-green: #1DB954;
+  --color-spotify-black: #121212;
+  --color-spotify-dark-gray: #181818;
+  --color-spotify-light-gray: #282828;
+  --color-text-primary: #FFFFFF;
+  --color-text-secondary: #B3B3B3;
+  --color-background: #121212;
+  --color-error: #F43F5E;
+  --color-warning: #FACC15;
+  --color-success: #22C55E;
+}
+
+/* Dark theme (default) */
+.dark-theme {
+  --color-text-primary: #FFFFFF;
+  --color-text-secondary: #B3B3B3;
+  --color-background: #121212;
+  color-scheme: dark;
+}
+
+/* Light theme */
+.light-theme {
+  --color-spotify-black: #FFFFFF;
+  --color-spotify-dark-gray: #F5F5F5;
+  --color-spotify-light-gray: #EEEEEE;
+  --color-text-primary: #000000;
+  --color-text-secondary: #6B7280;
+  --color-background: #FFFFFF;
+  color-scheme: light;
+}
+
+body {
+  @apply bg-background text-text-primary antialiased;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  background-color: var(--color-background);
+  color: var(--color-text-primary);
+}
+
+/* Auth UI customization */
+.auth-container {
+  @apply space-y-4;
+}
+
+.auth-button {
+  @apply w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-spotify-green hover:bg-spotify-green/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-spotify-green !important;
+}
+
+.auth-input {
+  @apply block w-full px-3 py-2 border border-gray-700 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-spotify-green focus:border-spotify-green bg-gray-800 text-white sm:text-sm !important;
+}
+
+.auth-label {
+  @apply block text-sm font-medium text-gray-300 !important;
+}
+
+/* Audio player slider styling */
+input[type="range"] {
+  -webkit-appearance: none;
+  appearance: none;
+  height: 4px;
+  border-radius: 2px;
+  background: #5E5E5E;
+  outline: none;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: var(--color-spotify-green);
+  cursor: pointer;
+}
+
+/* Custom animations */
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+.animate-pulse {
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
