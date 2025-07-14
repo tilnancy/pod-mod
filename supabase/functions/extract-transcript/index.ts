@@ -15,36 +15,15 @@ Deno.serve(async (req) => {
   }
 
   try {
-    console.log('Creating Supabase client');
-    const supabaseUrl = Deno.env.get('SUPABASE_URL');
-    const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY');
+    console.log('Getting OpenAI API key from secrets');
+    const openaiApiKey = Deno.env.get('OPENAI_API_KEY');
     
-    console.log('Supabase URL available:', !!supabaseUrl);
-    console.log('Supabase key available:', !!supabaseKey);
+    if (!openaiApiKey) {
+      console.error('OPENAI_API_KEY not found in environment');
+      throw new Error('OpenAI API key not configured');
+    }
     
-    const supabase = createClient(
-      supabaseUrl ?? '',
-      supabaseKey ?? ''
-    );
-
-    console.log('Fetching OpenAI API key from database');
-    const { data: apiKeyData, error: apiKeyError } = await supabase
-      .from('api_keys')
-      .select('key_value')
-      .eq('key_name', 'openai')
-      .single();
-
-    if (apiKeyError) {
-      console.error('Error fetching API key:', apiKeyError);
-      throw new Error('Failed to retrieve API key');
-    }
-
-    if (!apiKeyData) {
-      console.error('No API key found in database');
-      throw new Error('API key not found');
-    }
-
-    console.log('Successfully retrieved API key');
+    console.log('Successfully retrieved API key from secrets');
 
     const formData = await req.formData();
     const audioFile = formData.get('audio');
@@ -77,7 +56,7 @@ Deno.serve(async (req) => {
       const response = await fetch('https://api.openai.com/v1/audio/transcriptions', {
         method: 'POST',
         headers: {
-          'Authorization': `Bearer ${apiKeyData.key_value}`,
+          'Authorization': `Bearer ${openaiApiKey}`,
         },
         body: openAIFormData,
         signal: controller.signal,
