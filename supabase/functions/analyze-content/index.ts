@@ -26,15 +26,33 @@ Deno.serve(async (req) => {
   }
 
   try {
-    console.log('Getting OpenAI API key from secrets');
-    const openaiApiKey = Deno.env.get('OPENAI_API_KEY');
+    // Initialize Supabase client
+    const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
+    const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
+    const supabase = createClient(supabaseUrl, supabaseServiceKey);
+
+    console.log('Getting OpenAI API key from database');
+    
+    // Get OpenAI API key from database
+    const { data: apiKeyData, error: apiKeyError } = await supabase
+      .from('api_keys')
+      .select('key_value')
+      .eq('key_name', 'openai')
+      .single();
+
+    if (apiKeyError || !apiKeyData) {
+      console.error('Failed to get OpenAI API key from database:', apiKeyError);
+      throw new Error('OpenAI API key not found in database');
+    }
+
+    const openaiApiKey = apiKeyData.key_value;
     
     if (!openaiApiKey) {
-      console.error('OPENAI_API_KEY not found in environment');
+      console.error('OpenAI API key is empty');
       throw new Error('OpenAI API key not configured');
     }
     
-    console.log('Successfully retrieved API key from secrets');
+    console.log('Successfully retrieved API key from database');
 
     const requestData = await req.json();
     console.log('Received request data:', requestData);
